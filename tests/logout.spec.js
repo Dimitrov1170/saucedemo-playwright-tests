@@ -1,17 +1,16 @@
 import { test, expect } from '@playwright/test';
+import { LoginPage } from '../pageObjects/LoginPage';
+import { MenuPage } from '../pageObjects/MenuPage';
 
 test('User can log out successfully', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com/');
+  const loginPage = new LoginPage(page);
+  const menuPage = new MenuPage(page);
 
-  // Login
-  await page.fill('#user-name', 'standard_user');
-  await page.fill('#password', 'secret_sauce');
-  await page.click('#login-button');
+  await loginPage.goto();
+  await loginPage.login('standard_user', 'secret_sauce');
 
-  // Open menu and logout
-  await page.click('#react-burger-menu-btn');
-  await page.click('#logout_sidebar_link');
+  await menuPage.logout();
 
-  // Assertion: back on login page
   await expect(page).toHaveURL('https://www.saucedemo.com/');
+  await expect(page.locator('#login-button')).toBeVisible();
 });

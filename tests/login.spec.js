@@ -1,12 +1,12 @@
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
+import { LoginPage } from '../pageObjects/LoginPage';
 
-test('User can log in successfully', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com');
+test('Successful login redirects to inventory page', async ({ page }) => {
+  const loginPage = new LoginPage(page);
 
-  await page.fill('[data-test="username"]', 'standard_user');
-  await page.fill('[data-test="password"]', 'secret_sauce');
-  await page.click('[data-test="login-button"]');
+  await loginPage.goto();
+  await loginPage.login('standard_user', 'secret_sauce');
 
-  await expect(page).toHaveURL(/.*inventory\.html/);
-  await expect(page.locator('.title')).toHaveText('Products');
+  await expect(page).toHaveURL('https://www.saucedemo.com/inventory.html');
+  await expect(page.locator('.inventory_list')).toBeVisible();
 });
